@@ -13,8 +13,18 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+		mainwindow.cpp \
+    taskpane.cpp \
+    taskviewerpane.cpp \
+    taskeditorpane.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    taskpane.h \
+    taskviewerpane.h \
+    taskeditorpane.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
+
+CONFIG += c++11
+
+QMAKE_CXXFLAGS += -O2

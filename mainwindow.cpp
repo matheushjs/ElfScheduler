@@ -1,14 +1,23 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "taskpane.h"
+
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+	QMainWindow(parent)
 {
-	ui->setupUi(this);
-}
+	auto *centralWidget = new QWidget(this);
+	auto *mainBox = new QHBoxLayout(centralWidget);
 
-MainWindow::~MainWindow()
-{
-	delete ui;
+	auto *leftWid = new TaskPane();
+	auto *but2 = new QPushButton("Hello", this);
+
+	mainBox->addWidget(leftWid);
+	mainBox->addWidget(but2);
+	centralWidget->setLayout(mainBox);
+
+	this->setCentralWidget(centralWidget);
 }
