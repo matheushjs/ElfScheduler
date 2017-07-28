@@ -9,8 +9,8 @@ class TaskViewerPane : public QWidget
 {
 	Q_OBJECT
 
-	QListWidget *list;
-	QPushButton *button;
+	QListWidget *d_list;
+	QPushButton *d_button;
 
 public:
 	explicit TaskViewerPane(QWidget *parent = 0);

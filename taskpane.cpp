@@ -7,16 +7,16 @@
 
 TaskPane::TaskPane(QWidget *parent)
 	: QWidget(parent),
-	  editPane(new QVBoxLayout),
-	  viewPane(new QVBoxLayout)
+	  d_editPane(new QVBoxLayout),
+	  d_viewPane(new QVBoxLayout)
 {
-	viewPane->addWidget(new TaskViewerPane(this));
-	editPane->addWidget(new TaskEditorPane(this));
+	d_viewPane->addWidget(new TaskViewerPane(this));
+	d_editPane->addWidget(new TaskEditorPane(this));
 
-	setLayout(viewPane);
+	setLayout(d_viewPane);
 }
 
 TaskPane::~TaskPane(){
-	delete editPane;
-	delete viewPane;
+	delete d_editPane;
+	delete d_viewPane;
 }

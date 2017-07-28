@@ -8,8 +8,8 @@ class TaskPane : public QWidget
 {
 	Q_OBJECT
 
-	QVBoxLayout *editPane;
-	QVBoxLayout *viewPane;
+	QVBoxLayout *d_editPane;
+	QVBoxLayout *d_viewPane;
 
 public:
 	explicit TaskPane(QWidget *parent = 0);
