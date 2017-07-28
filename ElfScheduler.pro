@@ -16,12 +16,14 @@ SOURCES += main.cpp\
 		mainwindow.cpp \
     taskpane.cpp \
     taskviewerpane.cpp \
-    taskeditorpane.cpp
+    taskeditorpane.cpp \
+    datamodel.cpp
 
 HEADERS  += mainwindow.h \
     taskpane.h \
     taskviewerpane.h \
-    taskeditorpane.h
+    taskeditorpane.h \
+    datamodel.h
 
 FORMS    +=
 
