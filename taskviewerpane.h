@@ -18,8 +18,11 @@ public:
 	explicit TaskViewerPane(DataModel &model, QWidget *parent = 0);
 
 signals:
+	void addClicked();
+	void editClicked(int id);
 
 public slots:
+	void makeView();
 };
 
 #endif // TASKVIEWERPANE_H

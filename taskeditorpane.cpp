@@ -2,13 +2,22 @@
 
 #include <QFormLayout>
 #include <QGridLayout>
+#include <QHBoxLayout>
+
+const int TaskEditorPane::NEW_TASK = -1;
+const int TaskEditorPane::NO_TASK = -2;
+
+#define TYPE_FINISH 0
+#define TYPE_DELETE 1
 
 TaskEditorPane::TaskEditorPane(DataModel &model, QWidget *parent)
 	: QWidget(parent),
 	  d_titleLine(new QLineEdit(this)),
 	  d_daysBox(7),
 	  d_delBut(new QPushButton("Delete", this)),
-	  d_model(model)
+	  d_finBut(new QPushButton("Finish", this)),
+	  d_model(model),
+	  d_subjectId(TaskEditorPane::NO_TASK)
 {
 	static const char dayStr[][4] = { "Sun", "Mon", "Tue",
 								 "Wed", "Thu", "Fri",
@@ -30,10 +39,37 @@ TaskEditorPane::TaskEditorPane(DataModel &model, QWidget *parent)
 	grid->addWidget(d_daysBox[6], 2, 1);
 
 	form->addRow(grid);
-	form->addRow(d_delBut);
 
-	form->setAlignment(d_delBut, Qt::AlignCenter);
+	QHBoxLayout *buttons = new QHBoxLayout();
+	buttons->addWidget(d_delBut);
+	buttons->addWidget(d_finBut);
+	form->addRow(buttons);
+
+	form->setAlignment(buttons, Qt::AlignCenter);
 	d_delBut->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
+	connect(d_delBut, &QPushButton::clicked, this, [this]{processForm(TYPE_DELETE);});
+	connect(d_finBut, &QPushButton::clicked, this, [this]{processForm(TYPE_FINISH);});
+
 	setLayout(form);
+}
+
+void TaskEditorPane::setTask(int id){
+	d_subjectId = id;
+
+	if(id == NEW_TASK){
+		d_subjectId = d_model.addTask("");
+	} else {
+		d_titleLine->setText(d_model.getTitle(id).c_str());
+	}
+}
+
+void TaskEditorPane::processForm(int clickType){
+	if(clickType == TYPE_DELETE){
+		d_model.removeTask(d_subjectId);
+	} else {
+		d_model.editTask(d_subjectId, d_titleLine->text().toStdString());
+	}
+
+	emit finished();
 }

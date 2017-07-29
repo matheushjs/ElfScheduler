@@ -4,13 +4,15 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include "datamodel.h"
+#include "taskeditorpane.h"
+#include "taskviewerpane.h"
 
 class TaskPane : public QWidget
 {
 	Q_OBJECT
 
-	QVBoxLayout *d_editPane;
-	QVBoxLayout *d_viewPane;
+	TaskEditorPane *d_editPane;
+	TaskViewerPane *d_viewPane;
 	DataModel &d_model;
 
 public:
@@ -18,6 +20,10 @@ public:
 	~TaskPane();
 
 signals:
+
+private slots:
+	void showView();
+	void showEdit(int id);
 
 public slots:
 };
