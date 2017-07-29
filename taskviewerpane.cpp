@@ -24,6 +24,10 @@ TaskViewerPane::TaskViewerPane(DataModel &model, QWidget *parent)
 
 	// Re-emit the button signal
 	connect(d_button, SIGNAL(clicked(bool)), this, SIGNAL(addClicked()));
+
+	// Emit the editing signal
+	connect(d_list, &QListWidget::itemDoubleClicked,
+			this, [this](QListWidgetItem *item){ emit this->editClicked(item->type());});
 }
 
 void TaskViewerPane::setupUI(){

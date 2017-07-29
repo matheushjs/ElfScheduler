@@ -4,6 +4,9 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 
+#include <string>
+using std::string;
+
 const int TaskEditorPane::NEW_TASK = -1;
 const int TaskEditorPane::NO_TASK = -2;
 
@@ -63,8 +66,16 @@ void TaskEditorPane::setTask(int id){
 
 	if(id == NEW_TASK){
 		d_subjectId = d_model.addTask("");
-	} else {
-		d_titleLine->setText(d_model.getTitle(id).c_str());
+	}
+
+	d_titleLine->setText(d_model.getTitle(d_subjectId).c_str());
+
+	string str = d_model.getDays(d_subjectId);
+	for(int i = 0; i < 7; i++){
+		if(str.at(i) == 'f')
+			d_daysBox[i]->setChecked(false);
+		else
+			d_daysBox[i]->setChecked(true);
 	}
 }
 
@@ -72,7 +83,15 @@ void TaskEditorPane::processForm(int clickType){
 	if(clickType == TYPE_DELETE){
 		d_model.removeTask(d_subjectId);
 	} else {
-		d_model.editTask(d_subjectId, d_titleLine->text().toStdString());
+		string days;
+		for(QCheckBox *box: d_daysBox){
+			if(box->isChecked())
+				days.push_back('v');
+			else
+				days.push_back('f');
+		}
+
+		d_model.editTask(d_subjectId, d_titleLine->text().toStdString(), days);
 	}
 
 	emit finished();

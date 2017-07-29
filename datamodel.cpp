@@ -20,18 +20,33 @@ DataModel::DataModel(QObject *parent) : QObject(parent)
 	//addEntry(1, "T4");
 }
 
-int DataModel::addTask(const string &title){
+int DataModel::addTask(const string &title, const string &days){
 	static int id = 0;
 	d_titles[id] = title;
 	d_logs[id];
+	d_weekdays[id] = days;
 	id += 1;
 	return id - 1;
+}
+
+int DataModel::addTask(const string &title){
+	return addTask(title, "fffffff");
 }
 
 void DataModel::removeTask(int id){
 	d_titles.erase(id);
 	d_logs.erase(id);
+	d_weekdays.erase(id);
 	emit dataChanged();
+}
+
+void DataModel::editTask(int id, const string &newTitle, const string &days){
+	if(d_titles.count(id) == 0) return;
+	else {
+		d_titles[id] = newTitle;
+		d_weekdays[id] = days;
+		emit dataChanged();
+	}
 }
 
 void DataModel::editTask(int id, const string &newTitle){
@@ -61,6 +76,11 @@ vector<int> DataModel::getIds(){
 string DataModel::getTitle(int taskId){
 	if(d_titles.count(taskId) == 0) return "";
 	else return d_titles[taskId];
+}
+
+string DataModel::getDays(int taskId){
+	if(d_titles.count(taskId) == 0) return "fffffff";
+	else return d_weekdays[taskId];
 }
 
 vector<string> DataModel::getEntry(int taskId){
