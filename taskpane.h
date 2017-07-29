@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include "datamodel.h"
 
 class TaskPane : public QWidget
 {
@@ -10,9 +11,10 @@ class TaskPane : public QWidget
 
 	QVBoxLayout *d_editPane;
 	QVBoxLayout *d_viewPane;
+	DataModel &d_model;
 
 public:
-	explicit TaskPane(QWidget *parent = 0);
+	explicit TaskPane(DataModel &model, QWidget *parent = 0);
 	~TaskPane();
 
 signals:

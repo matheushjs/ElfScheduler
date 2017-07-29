@@ -3,11 +3,12 @@
 #include <QFormLayout>
 #include <QGridLayout>
 
-TaskEditorPane::TaskEditorPane(QWidget *parent)
+TaskEditorPane::TaskEditorPane(DataModel &model, QWidget *parent)
 	: QWidget(parent),
 	  d_titleLine(new QLineEdit(this)),
 	  d_daysBox(7),
-	  d_delBut(new QPushButton("Delete", this))
+	  d_delBut(new QPushButton("Delete", this)),
+	  d_model(model)
 {
 	static const char dayStr[][4] = { "Sun", "Mon", "Tue",
 								 "Wed", "Thu", "Fri",

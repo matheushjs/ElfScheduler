@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QListWidget>
+#include "datamodel.h"
 
 class TaskViewerPane : public QWidget
 {
@@ -11,9 +12,10 @@ class TaskViewerPane : public QWidget
 
 	QListWidget *d_list;
 	QPushButton *d_button;
+	DataModel &d_model;
 
 public:
-	explicit TaskViewerPane(QWidget *parent = 0);
+	explicit TaskViewerPane(DataModel &model, QWidget *parent = 0);
 
 signals:
 

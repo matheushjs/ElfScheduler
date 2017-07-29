@@ -6,13 +6,14 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-MainWindow::MainWindow(QWidget *parent) :
-	QMainWindow(parent)
+MainWindow::MainWindow(DataModel &model, QWidget *parent) :
+	QMainWindow(parent),
+	d_model(model)
 {
 	auto *centralWidget = new QWidget(this);
 	auto *mainBox = new QHBoxLayout(centralWidget);
 
-	auto *leftWid = new TaskPane();
+	auto *leftWid = new TaskPane(model);
 	auto *but2 = new QPushButton("Hello", this);
 
 	mainBox->addWidget(leftWid);

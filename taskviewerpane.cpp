@@ -3,11 +3,18 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QListWidgetItem>
 
-TaskViewerPane::TaskViewerPane(QWidget *parent)
+#include <string>
+#include <iostream>
+
+using std::string;
+
+TaskViewerPane::TaskViewerPane(DataModel &model, QWidget *parent)
 	: QWidget(parent),
 	  d_list(new QListWidget(this)),
-	  d_button(new QPushButton("+", this))
+	  d_button(new QPushButton("+", this)),
+	  d_model(model)
 {
 	auto *box = new QVBoxLayout(this);
 	auto *butBox = new QHBoxLayout();
@@ -21,8 +28,9 @@ TaskViewerPane::TaskViewerPane(QWidget *parent)
 	box->addWidget(d_list);
 	box->addLayout(butBox);
 
-	d_list->addItem("Hey");
-	d_list->addItem("Hey2");
+	for(int i: d_model.getIds()){
+		new QListWidgetItem(d_model.getTitle(i).c_str(), d_list, i);
+	}
 
 	setLayout(box);
 }

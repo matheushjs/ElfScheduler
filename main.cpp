@@ -6,11 +6,9 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	MainWindow w;
 
 	DataModel model;
-	model.addTask("Genki Studying");
-	model.printAll();
+	MainWindow w(model);
 
 	w.setWindowTitle("Elf Scheduler");
 	w.resize(500, 500);

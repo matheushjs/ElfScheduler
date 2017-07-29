@@ -29,11 +29,26 @@ class DataModel : public QObject
 
 public:
 	explicit DataModel(QObject *parent = 0);
+
 	int addTask(const std::string &title);
 	void removeTask(int id);
+	void editTask(int id, const std::string &newTitle);
+
+	void addEntry(int taskId, const std::string &newLog);
+
+	// Returns all IDs
+	std::vector<int> getIds();
+
+	// Returns a task titles
+	std::string getTitle(int taskId);
+
+	// Returns all entries for a task. Newer entries come first.
+	std::vector<std::string> getEntry(int taskId);
+
 	void printAll();
 
 signals:
+	void dataChanged();
 
 public slots:
 };
