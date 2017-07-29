@@ -11,8 +11,7 @@ TaskPane::TaskPane(DataModel &model, QWidget *parent)
 	  d_viewPane(new TaskViewerPane(model)),
 	  d_model(model)
 {
-	setLayout(new QVBoxLayout(this));
-	showView();
+	setupUI();
 
 	connect(d_viewPane, &TaskViewerPane::addClicked,
 			this, [this](){showEdit(TaskEditorPane::NEW_TASK);} );
@@ -20,6 +19,11 @@ TaskPane::TaskPane(DataModel &model, QWidget *parent)
 	connect(d_viewPane, SIGNAL(editClicked(int)), this, SLOT(showEdit(int)));
 
 	connect(d_editPane, SIGNAL(finished()), this, SLOT(showView()));
+}
+
+void TaskPane::setupUI(){
+	setLayout(new QVBoxLayout(this));
+	showView();
 }
 
 TaskPane::~TaskPane(){

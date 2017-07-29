@@ -10,6 +10,8 @@ class MainWindow : public QMainWindow
 
 	DataModel &d_model;
 
+	void setupUI();
+
 public:
 	explicit MainWindow(DataModel &model, QWidget *parent = 0);
 };

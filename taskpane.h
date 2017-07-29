@@ -15,6 +15,8 @@ class TaskPane : public QWidget
 	TaskViewerPane *d_viewPane;
 	DataModel &d_model;
 
+	void setupUI();
+
 public:
 	explicit TaskPane(DataModel &model, QWidget *parent = 0);
 	~TaskPane();

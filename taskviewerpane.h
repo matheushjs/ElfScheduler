@@ -14,6 +14,8 @@ class TaskViewerPane : public QWidget
 	QPushButton *d_button;
 	DataModel &d_model;
 
+	void setupUI();
+
 public:
 	explicit TaskViewerPane(DataModel &model, QWidget *parent = 0);
 

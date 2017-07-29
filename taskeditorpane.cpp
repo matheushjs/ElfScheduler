@@ -19,6 +19,13 @@ TaskEditorPane::TaskEditorPane(DataModel &model, QWidget *parent)
 	  d_model(model),
 	  d_subjectId(TaskEditorPane::NO_TASK)
 {
+	setupUI();
+
+	connect(d_delBut, &QPushButton::clicked, this, [this]{processForm(TYPE_DELETE);});
+	connect(d_finBut, &QPushButton::clicked, this, [this]{processForm(TYPE_FINISH);});
+}
+
+void TaskEditorPane::setupUI(){
 	static const char dayStr[][4] = { "Sun", "Mon", "Tue",
 								 "Wed", "Thu", "Fri",
 								 "Sat" };
@@ -47,9 +54,6 @@ TaskEditorPane::TaskEditorPane(DataModel &model, QWidget *parent)
 
 	form->setAlignment(buttons, Qt::AlignCenter);
 	d_delBut->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-
-	connect(d_delBut, &QPushButton::clicked, this, [this]{processForm(TYPE_DELETE);});
-	connect(d_finBut, &QPushButton::clicked, this, [this]{processForm(TYPE_FINISH);});
 
 	setLayout(form);
 }

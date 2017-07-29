@@ -19,6 +19,7 @@ class TaskEditorPane : public QWidget
 	DataModel &d_model;
 	int d_subjectId;
 
+	void setupUI();
 	void processForm(int clickType);
 
 public:

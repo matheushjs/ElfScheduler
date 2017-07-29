@@ -10,10 +10,14 @@ MainWindow::MainWindow(DataModel &model, QWidget *parent) :
 	QMainWindow(parent),
 	d_model(model)
 {
+	setupUI();
+}
+
+void MainWindow::setupUI(){
 	auto *centralWidget = new QWidget(this);
 	auto *mainBox = new QHBoxLayout(centralWidget);
 
-	auto *leftWid = new TaskPane(model);
+	auto *leftWid = new TaskPane(d_model);
 	auto *but2 = new QPushButton("Hello", this);
 
 	mainBox->addWidget(leftWid);
