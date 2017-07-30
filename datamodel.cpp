@@ -84,7 +84,7 @@ string DataModel::getDays(int taskId){
 }
 
 vector<string> DataModel::getEntry(int taskId){
-	if(d_titles.count(taskId)){
+	if(d_titles.count(taskId) == 0){
 		return vector<string>();
 	} else {
 		vector<string> &vec = d_logs[taskId];
@@ -93,6 +93,7 @@ vector<string> DataModel::getEntry(int taskId){
 		// Inverted copy
 		for(int i = vec.size()-1; i >= 0; i--)
 			result.push_back(vec[i]);
+
 		return result;
 	}
 }

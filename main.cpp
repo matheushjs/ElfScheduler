@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
 	MainWindow w(model);
 
 	w.setWindowTitle("Elf Scheduler");
-	w.resize(500, 500);
 	w.show();
 
 	return a.exec();
