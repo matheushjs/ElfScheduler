@@ -8,6 +8,9 @@
 #include <QLineEdit>
 #include "datamodel.h"
 
+/* Widget for viewing the log for a task.
+ * Newer log items appear on top of the QListWidget
+ */
 class EntryViewerPane : public QWidget
 {
 	Q_OBJECT

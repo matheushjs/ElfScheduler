@@ -7,6 +7,9 @@
 #include "datamodel.h"
 #include "entryviewerpane.h"
 
+/* Outer Widget on the left pane.
+ * Manages a scroll pane that contains a bunch of EntryViewerPanes
+ */
 class EntryPane : public QWidget
 {
 	Q_OBJECT

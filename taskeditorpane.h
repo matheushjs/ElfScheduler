@@ -8,6 +8,10 @@
 #include <vector>
 #include "datamodel.h"
 
+/* Inner widget of the left pane.
+ * Parent widget should be TaskPane.
+ * This widget presents the user with a form for editing a task.
+ */
 class TaskEditorPane : public QWidget
 {
 	Q_OBJECT

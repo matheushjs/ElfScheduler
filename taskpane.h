@@ -7,6 +7,10 @@
 #include "taskeditorpane.h"
 #include "taskviewerpane.h"
 
+/* Outer widget for the left pane.
+ * Manages 2 other widgets: 1 TaskEditorPane and 1 TaskViewerPane.
+ * Only 1 widget is shown at a time, and they are exchanged whenever needed.
+ */
 class TaskPane : public QWidget
 {
 	Q_OBJECT

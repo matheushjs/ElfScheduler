@@ -6,6 +6,11 @@
 #include <QListWidget>
 #include "datamodel.h"
 
+/* Inner widget of the left pane.
+ * Parent widget should be TaskPane.
+ * This widget presents the list of tasks the user currently have.
+ * There is also a button for adding a new task.
+ */
 class TaskViewerPane : public QWidget
 {
 	Q_OBJECT

@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "datamodel.h"
 
+/* Global parent widget
+ */
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
