@@ -1,3 +1,6 @@
+#include <QStringList>
+#include <QDir>
+#include <QDebug>
 #include <string>
 #include <vector>
 #include <map>
@@ -10,23 +13,49 @@ using std::map;
 using std::vector;
 using std::cout;
 
-DataModel::DataModel(QObject *parent) : QObject(parent)
+DataModel::DataModel(const QString &dbName, QObject *parent)
+	: QObject(parent),
+	  db(QSqlDatabase::addDatabase("QSQLITE"))
 {
-	addTask("Study 1");
-	addTask("Study 2");
-	//addEntry(0, "T1");
-	//addEntry(0, "T2");
-	//addEntry(1, "T3");
-	//addEntry(1, "T4");
+	// Ensure our directory at the HOME directory exists
+	QDir dir;
+	QString path = QDir::homePath() + QDir::separator() + QString(".elfscheduler");
+	dir.mkpath(path);
+
+	// Open database specified by the user.
+	if(dbName == QString()){
+		// TODO: Load last session
+		path += QDir::separator() + QString("default.db");
+		db.setDatabaseName(path);
+
+	} else {
+		path += QDir::separator() + dbName + QString(".db");
+		db.setDatabaseName(path);
+	}
+	db.open();
+
+	// If database is empty, create the due tables
+	QStringList list = db.tables();
+	if(list.size() == 0){
+		db.exec("CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, weekdays TEXT[7]);");
+		db.exec("CREATE TABLE entries(id INTEGER PRIMARY KEY AUTOINCREMENT, entry TEXT, taskId INTEGER);");
+	}
+
 }
 
 int DataModel::addTask(const string &title, const string &days){
-	static int id = 0;
-	d_titles[id] = title;
-	d_logs[id];
-	d_weekdays[id] = days;
-	id += 1;
-	return id - 1;
+	QSqlQuery query;
+	query.prepare("INSERT INTO tasks(title, weekdays) VALUES (?,?);");
+	query.addBindValue(title.c_str());
+	query.addBindValue(days.c_str());
+	query.exec();
+
+	// Now get the inserted ID.
+	query.exec("SELECT max(id) FROM tasks;");
+	query.next();
+	int id = query.value(0).toInt();
+
+	return id;
 }
 
 int DataModel::addTask(const string &title){
@@ -34,76 +63,117 @@ int DataModel::addTask(const string &title){
 }
 
 void DataModel::removeTask(int id){
-	d_titles.erase(id);
-	d_logs.erase(id);
-	d_weekdays.erase(id);
+	QSqlQuery query;
+	query.prepare("DELETE FROM tasks WHERE id = ?;");
+	query.addBindValue(id);
+	query.exec();
+
+	query.prepare("DELETE FROM entries WHERE taskId = ?;");
+	query.addBindValue(id);
+	query.exec();
+
 	emit dataChanged();
 }
 
 void DataModel::editTask(int id, const string &newTitle, const string &days){
-	if(d_titles.count(id) == 0) return;
-	else {
-		d_titles[id] = newTitle;
-		d_weekdays[id] = days;
-		emit dataChanged();
-	}
+	QSqlQuery query;
+	query.prepare("UPDATE tasks SET title = ?, weekdays = ? WHERE id = ?;");
+	query.addBindValue(newTitle.c_str());
+	query.addBindValue(days.c_str());
+	query.addBindValue(id);
+	query.exec();
+
+	emit dataChanged();
 }
 
 void DataModel::editTask(int id, const string &newTitle){
-	if(d_titles.count(id) == 0) return;
-	else {
-		d_titles[id] = newTitle;
-		emit dataChanged();
-	}
+	QSqlQuery query;
+	query.prepare("UPDATE tasks SET title = ? WHERE id = ?;");
+	query.addBindValue(newTitle.c_str());
+	query.addBindValue(id);
+	query.exec();
+
+	emit dataChanged();
 }
 
 void DataModel::addEntry(int taskId, const string &newLog){
-	if(d_titles.count(taskId) == 0) return;
-	else {
-		d_logs[taskId].push_back(newLog);
-		emit dataChanged();
-	}
+	QSqlQuery query;
+	query.prepare("INSERT INTO entries(taskId, entry) VALUES (?, ?);");
+	query.addBindValue(taskId);
+	query.addBindValue(newLog.c_str());
+	query.exec();
+
+	emit dataChanged();
 }
 
 vector<int> DataModel::getIds(){
+	QSqlQuery query;
+	query.exec("SELECT id FROM tasks;");
+
 	vector<int> result;
-	for(auto &kv: d_titles){
-		result.push_back(kv.first);
+	while(query.next()){
+		result.push_back(query.value(0).toInt());
 	}
+
 	return result;
 }
 
 string DataModel::getTitle(int taskId){
-	if(d_titles.count(taskId) == 0) return "";
-	else return d_titles[taskId];
-}
+	QSqlQuery query;
+	query.prepare("SELECT title FROM tasks WHERE id = ?;");
+	query.addBindValue(taskId);
+	query.exec();
 
-string DataModel::getDays(int taskId){
-	if(d_titles.count(taskId) == 0) return "fffffff";
-	else return d_weekdays[taskId];
-}
-
-vector<string> DataModel::getEntry(int taskId){
-	if(d_titles.count(taskId) == 0){
-		return vector<string>();
+	if(query.next()){
+		return query.value(0).toString().toStdString();
 	} else {
-		vector<string> &vec = d_logs[taskId];
-		vector<string> result;
-
-		// Inverted copy
-		for(int i = vec.size()-1; i >= 0; i--)
-			result.push_back(vec[i]);
-
-		return result;
+		return "";
 	}
 }
 
-void DataModel::printAll(){
-	for(auto &kv: d_titles){
-		cout << kv.first << ": " << kv.second << '\n';
+string DataModel::getDays(int taskId){
+	QSqlQuery query;
+	query.prepare("SELECT weekdays FROM tasks WHERE id = ?;");
+	query.addBindValue(taskId);
+	query.exec();
 
-		vector<string> &vec = d_logs[kv.first];
-		for(int i = vec.size() - 1; i >= 0; i--)
-			cout << "\t" << vec[i] << "\n";
+	if(query.next()){
+		return query.value(0).toString().toStdString();
+	} else {
+		return "ffffff";
+	}
+}
+
+vector<string> DataModel::getEntry(int taskId){
+	QSqlQuery query;
+	query.prepare("SELECT entry FROM entries WHERE taskId = ? ORDER BY id DESC;");
+	query.addBindValue(taskId);
+	query.exec();
+
+	vector<string> result;
+	while(query.next()){
+		result.push_back(query.value(0).toString().toStdString());
+	}
+
+	return result;
+}
+
+void DataModel::printAll(){
+	QSqlQuery query;
+	query.exec("SELECT id, title, weekdays FROM tasks;");
+	while(query.next()){
+		int id = query.value(0).toInt();
+		QString title = query.value(1).toString();
+		QString days = query.value(2).toString();
+		qDebug() << id << " " << title << " " << days << '\n';
+
+		QSqlQuery subQuery;
+		subQuery.prepare("SELECT entry FROM entries WHERE taskId = ? ORDER BY id DESC;");
+		subQuery.addBindValue(id);
+		subQuery.exec();
+
+		while(subQuery.next()){
+			qDebug() << '\t' << subQuery.value(0).toString() << '\n';
+		}
 	}
 }

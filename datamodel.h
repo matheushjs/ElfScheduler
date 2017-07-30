@@ -2,10 +2,10 @@
 #define DATAMODEL_H
 
 #include <QObject>
+#include <QtSql/QtSql>
 
 #include <vector>
 #include <string>
-#include <map>
 
 /* (id INT PRIMARY KEY, title VARCHAR, weekdays INT)
  *     is the list of tasks
@@ -24,12 +24,11 @@ class DataModel : public QObject
 {
 	Q_OBJECT
 
-	std::map<int,std::string> d_titles;
-	std::map<int,std::vector<std::string> > d_logs;
-	std::map<int, std::string> d_weekdays;
+	// I'll use SQL merely as practice.
+	QSqlDatabase db;
 
 public:
-	explicit DataModel(QObject *parent = 0);
+	explicit DataModel(const QString &dbName = QString(), QObject *parent = 0);
 
 	// 'days' is a string with 7 characters, each character 'f' or 't'.
 	int addTask(const std::string &title, const std::string &days);
