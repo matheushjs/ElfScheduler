@@ -1,6 +1,8 @@
 #include <QStringList>
 #include <QDir>
+#include <QFile>
 #include <QDebug>
+
 #include <string>
 #include <vector>
 #include <map>
@@ -12,35 +14,62 @@ using std::string;
 using std::map;
 using std::vector;
 using std::cout;
+using std::cin;
 
-DataModel::DataModel(const QString &dbName, QObject *parent)
+DataModel::DataModel(QString dbName, QObject *parent)
 	: QObject(parent),
-	  db(QSqlDatabase::addDatabase("QSQLITE"))
+	  d_db(QSqlDatabase::addDatabase("QSQLITE"))
 {
 	// Ensure our directory at the HOME directory exists
 	QDir dir;
-	QString path = QDir::homePath() + QDir::separator() + QString(".elfscheduler");
-	dir.mkpath(path);
+	QString dirPath = QDir::homePath() + QDir::separator() + QString(".elfscheduler");
+	dir.mkpath(dirPath);
+
+	// Decide database name
+	if(dbName == QString()){
+		// Restore session
+		QFile sessFile(dirPath + QDir::separator() + "savedsession.txt");
+		if(sessFile.exists()){
+			sessFile.open(QIODevice::ReadOnly);
+			QTextStream stream(&sessFile);
+			stream >> dbName;
+			sessFile.close();
+		} else {
+			cout << "There is no saved session\n";
+			exit(0);
+		}
+	} else {
+		dbName += ".db";
+		QFile sessFile(dirPath + QDir::separator() + dbName);
+		if(!sessFile.exists()){
+			cout << "Database '" << dbName.toStdString() << "' does not exist yet. Create it [y/N]? ";
+			char input;
+			cin >> input;
+			if(input != 'y' && input != 'Y')
+				exit(0);
+		} else sessFile.close();
+	}
 
 	// Open database specified by the user.
-	if(dbName == QString()){
-		// TODO: Load last session
-		path += QDir::separator() + QString("default.db");
-		db.setDatabaseName(path);
-
-	} else {
-		path += QDir::separator() + dbName + QString(".db");
-		db.setDatabaseName(path);
-	}
-	db.open();
+	QString dbPath = dirPath + QDir::separator() + dbName;
+	d_db.setDatabaseName(dbPath);
+	d_db.open();
 
 	// If database is empty, create the due tables
-	QStringList list = db.tables();
+	QStringList list = d_db.tables();
 	if(list.size() == 0){
-		db.exec("CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, weekdays TEXT[7]);");
-		db.exec("CREATE TABLE entries(id INTEGER PRIMARY KEY AUTOINCREMENT, entry TEXT, taskId INTEGER);");
+		d_db.exec("CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, weekdays TEXT[7]);");
+		d_db.exec("CREATE TABLE entries(id INTEGER PRIMARY KEY AUTOINCREMENT, entry TEXT, taskId INTEGER);");
 	}
 
+	d_dbName = dbName;
+
+	// Save current session
+	QFile sessFile(dirPath + QDir::separator() + "savedsession.txt");
+	sessFile.open(QIODevice::WriteOnly);
+	QTextStream stream(&sessFile);
+	stream << dbName;
+	sessFile.close();
 }
 
 int DataModel::addTask(const string &title, const string &days){
@@ -176,4 +205,8 @@ void DataModel::printAll(){
 			qDebug() << '\t' << subQuery.value(0).toString() << '\n';
 		}
 	}
+}
+
+string DataModel::getName(){
+	return d_dbName.toStdString();
 }

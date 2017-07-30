@@ -25,10 +25,11 @@ class DataModel : public QObject
 	Q_OBJECT
 
 	// I'll use SQL merely as practice.
-	QSqlDatabase db;
+	QSqlDatabase d_db;
+	QString d_dbName;
 
 public:
-	explicit DataModel(const QString &dbName = QString(), QObject *parent = 0);
+	explicit DataModel(QString dbName = QString(), QObject *parent = 0);
 
 	// 'days' is a string with 7 characters, each character 'f' or 't'.
 	int addTask(const std::string &title, const std::string &days);
@@ -54,6 +55,8 @@ public:
 	std::vector<std::string> getEntry(int taskId);
 
 	void printAll();
+
+	std::string getName();
 
 signals:
 	void dataChanged();
