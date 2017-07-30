@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	MainWindow w(model);
 
 	w.setWindowTitle("Elf Scheduler");
-	w.show();
+	w.showMaximized();
 
 	return a.exec();
 }

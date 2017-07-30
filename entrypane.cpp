@@ -16,6 +16,7 @@ EntryPane::EntryPane(DataModel &model, QWidget *parent)
 	  d_header(new QLabel(this))
 {
 	setupUI();
+	setFocusPolicy(Qt::StrongFocus);
 	makeView();
 	connect(&model, &DataModel::dataChanged, this, &EntryPane::makeView);
 }
@@ -68,5 +69,15 @@ void EntryPane::makeView(){
 		string weekday = d_model.getDays(id);
 		if(weekday.at(week) == 't')
 			addTask(id);
+	}
+
+	if(d_panes.size() > 0)
+		d_panes[0]->setFocus();
+
+	if(d_panes.size() > 1)
+		this->setTabOrder(d_panes[d_panes.size()-1], d_panes[0]);
+
+	for(unsigned int i = 1; i < d_panes.size(); i++){
+		this->setTabOrder(d_panes[i-1], d_panes[i]);
 	}
 }

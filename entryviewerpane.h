@@ -17,7 +17,6 @@ class EntryViewerPane : public QWidget
 
 	QLabel *d_header;
 	QListWidget *d_list;
-	QPushButton *d_but;
 	QLineEdit *d_line;
 	DataModel &d_model;
 	int d_taskId;
