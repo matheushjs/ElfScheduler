@@ -86,7 +86,7 @@ void TaskEditorPane::processForm(int clickType){
 		string days;
 		for(QCheckBox *box: d_daysBox){
 			if(box->isChecked())
-				days.push_back('v');
+				days.push_back('t');
 			else
 				days.push_back('f');
 		}
