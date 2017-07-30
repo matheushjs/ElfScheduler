@@ -54,6 +54,7 @@ DataModel::DataModel(QString dbName, QObject *parent)
 	QString dbPath = dirPath + QDir::separator() + dbName;
 	d_db.setDatabaseName(dbPath);
 	d_db.open();
+	cleanOld();
 
 	// If database is empty, create the due tables
 	QStringList list = d_db.tables();
@@ -209,4 +210,10 @@ void DataModel::printAll(){
 
 string DataModel::getName(){
 	return d_dbName.toStdString();
+}
+
+void DataModel::cleanOld(){
+	QSqlQuery query;
+	// Leaves only the 500 oldest entries.
+	query.exec("DELETE FROM entries WHERE id IN (SELECT id FROM entries ORDER BY id DESC LIMIT -1 OFFSET 500);");
 }

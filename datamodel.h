@@ -28,6 +28,9 @@ class DataModel : public QObject
 	QSqlDatabase d_db;
 	QString d_dbName;
 
+	// Cleans old entries
+	void cleanOld();
+
 public:
 	explicit DataModel(QString dbName = QString(), QObject *parent = 0);
 
