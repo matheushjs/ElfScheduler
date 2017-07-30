@@ -2,8 +2,10 @@
 
 #include <QVBoxLayout>
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
 
 EntryViewerPane::EntryViewerPane(int taskId, DataModel &model, QWidget *parent)
 	: QWidget(parent),
@@ -30,19 +32,17 @@ void EntryViewerPane::setupUI(){
 	d_but->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 
 	d_header->setText(d_model.getTitle(d_taskId).c_str());
-	for(string &str: d_model.getEntry(d_taskId))
+	for(string &str: d_model.getEntry(d_taskId)){
 		d_list->addItem(QString(str.c_str()));
+	}
 
 	setLayout(box);
 }
 
 void EntryViewerPane::addInputTask(){
 	string str = d_line->text().toStdString();
-	d_line->clear();
+	if(str == "") return;
+
+	// As soon as the model is changed, EntryPane will replace all EntryViewerPanes for new ones.
 	d_model.addEntry(d_taskId, str);
-
-	d_list->clear();
-
-	for(string &str: d_model.getEntry(d_taskId))
-		d_list->addItem(QString(str.c_str()));
 }
