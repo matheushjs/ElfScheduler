@@ -28,3 +28,29 @@ What Elf Scheduler provides is:
 - For each task, if it is a task that should be performed today, then it is presented on the graphical interface as a list of entries, and each entry is something like "hanzi group 3" where you specify what the last activity performed for that task was. The entries are shown in the order they are inserted, from most recent to the oldest. Entries can be inserted through the graphical interface.
 
 The following image represent an example:
+
+![](./img_elfscheduler_example.png)
+
+# Usage
+
+Elf Scheduler begins as a command line tool. To execute it, you can run:
+
+```
+$ ./elfscheduler [args]
+```
+
+If no arguments are provided, it tries to load the last schedule opened. To open an existing schedule, or to create a new schedule, run:
+
+```
+$ ./elfscheduler chinese
+```
+
+This would create the schedule 'chinese'. The schedule names are currently case-sensitive.
+
+The interface is very intuitive. On the **right pane**, the tasks that should be executed today will appear; note that if it's earlier than 6am, then the current day is set to be the previous day (I'm a late sleeper). You can add new entries to each task by typing on the editable box on the bottom of the list of entries; type ENTER to submit.
+
+On the **left pane** of the interface, there should be a list of tasks on your schedule, you can edit each of them by double-clicking them; add new ones through the button on the bottom.
+
+# Building
+
+The program was developed using Qt version 5, so any QtCreator with support for version 5 will be able to build this project.
