@@ -9,19 +9,33 @@
 
 using std::string;
 
+const static char g_weekdays[][20] = {
+	"Sunday", "Monday", "Tuesday", "Wednesday",
+	"Thursday", "Friday", "Saturday"
+};
+
 EntryPane::EntryPane(DataModel &model, QWidget *parent)
 	: QWidget(parent),
 	  d_box(new QHBoxLayout()),
 	  d_model(model),
 	  d_header(new QLabel(this))
 {
-	setupUI();
-	setFocusPolicy(Qt::StrongFocus);
-	makeView();
-	connect(&model, &DataModel::dataChanged, this, &EntryPane::makeView);
+	// Set up weekday
+	d_week = QDate::currentDate().dayOfWeek() % 7; // Makes Sunday get 0
+	int hour = QTime::currentTime().hour();
+	if(hour < 6)
+		d_week = (d_week != 0) ? d_week - 1 : 6 ;
+
+	setupUI(d_week);
+
+	initializeView();
+
+	connect(&model, SIGNAL(taskAdded(int)), this, SLOT(addTask(int)));
+	connect(&model, SIGNAL(taskRemoved(int)), this, SLOT(removeTask(int)));
+	connect(&model, SIGNAL(taskEdited(int)), this, SLOT(checkEditedTask(int)));
 }
 
-void EntryPane::setupUI(){
+void EntryPane::setupUI(int currentWeek){
 	d_header->setFont(QFont("Liberation Sans", 14, 5, false));
 	d_header->setMargin(5);
 
@@ -35,49 +49,70 @@ void EntryPane::setupUI(){
 	wid->setLayout(d_box);
 	scroll->setWidget(wid);
 	scroll->setWidgetResizable(true);
+
+	d_header->setText(g_weekdays[currentWeek]);
+
+	setFocusPolicy(Qt::StrongFocus);
 }
 
 void EntryPane::addTask(int taskId){
+	// Check if the given task should be displayed today
+	string weekdays = d_model.getDays(taskId);
+	if(weekdays.at(d_week) != 't') return;
+
+	// Add task
 	EntryViewerPane *pane = new EntryViewerPane(taskId, d_model, this);
 	d_panes.push_back(pane);
 
 	pane->setMaximumWidth(300);
 	pane->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-
 	d_box->addWidget(pane);
-}
 
-void EntryPane::makeView(){
-	const static char weekdays[][20] = {
-		"Sunday", "Monday", "Tuesday", "Wednesday",
-		"Thursday", "Friday", "Saturday"
-	};
-
-	for(EntryViewerPane *p: d_panes)
-		delete p;
-	d_panes.clear();
-
-	int week = QDate::currentDate().dayOfWeek() % 7; // Makes Sunday get 0
-	int hour = QTime::currentTime().hour();
-
-	if(hour < 6)
-		week = (week != 0) ? week - 1 : 6 ;
-
-	d_header->setText(weekdays[week]);
-
-	for(int id: d_model.getIds()){
-		string weekday = d_model.getDays(id);
-		if(weekday.at(week) == 't')
-			addTask(id);
-	}
-
-	if(d_panes.size() > 0)
-		d_panes[0]->setFocus();
-
-	if(d_panes.size() > 1)
-		this->setTabOrder(d_panes[d_panes.size()-1], d_panes[0]);
-
+	// Reset focus order
 	for(unsigned int i = 1; i < d_panes.size(); i++){
 		this->setTabOrder(d_panes[i-1], d_panes[i]);
+	}
+
+	d_panes[0]->setFocus();
+}
+
+void EntryPane::checkEditedTask(int taskId){
+	bool found;
+	string weekdays;
+
+	// Find the due EntryViewerPane
+	found = false;
+	for(EntryViewerPane *pane: d_panes){
+		if(pane->getId() == taskId){
+			found = true;
+			break;
+		}
+	}
+
+	if(found){
+		//If should not be shown, remove.
+		weekdays = d_model.getDays(taskId);
+		if(weekdays.at(d_week) == 'f')
+			removeTask(taskId);
+	} else {
+		//addTask already checks weekdays.
+		addTask(taskId);
+	}
+}
+
+void EntryPane::removeTask(int taskId){
+	// Find the due EntryViewerPane
+	for(auto it = d_panes.begin(); it != d_panes.end(); it++){
+		if(taskId == (*it)->getId()){
+			delete *it;
+			d_panes.erase(it);
+			break;
+		}
+	}
+}
+
+void EntryPane::initializeView(){
+	for(int id: d_model.getIds()){
+		addTask(id);
 	}
 }

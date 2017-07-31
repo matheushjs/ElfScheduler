@@ -85,6 +85,8 @@ int DataModel::addTask(const string &title, const string &days){
 	query.next();
 	int id = query.value(0).toInt();
 
+	emit taskAdded(id);
+
 	return id;
 }
 
@@ -102,7 +104,7 @@ void DataModel::removeTask(int id){
 	query.addBindValue(id);
 	query.exec();
 
-	emit dataChanged();
+	emit taskRemoved(id);
 }
 
 void DataModel::editTask(int id, const string &newTitle, const string &days){
@@ -113,7 +115,7 @@ void DataModel::editTask(int id, const string &newTitle, const string &days){
 	query.addBindValue(id);
 	query.exec();
 
-	emit dataChanged();
+	emit taskEdited(id);
 }
 
 void DataModel::editTask(int id, const string &newTitle){
@@ -123,7 +125,7 @@ void DataModel::editTask(int id, const string &newTitle){
 	query.addBindValue(id);
 	query.exec();
 
-	emit dataChanged();
+	emit taskEdited(id);
 }
 
 void DataModel::addEntry(int taskId, const string &newLog){
@@ -133,7 +135,7 @@ void DataModel::addEntry(int taskId, const string &newLog){
 	query.addBindValue(newLog.c_str());
 	query.exec();
 
-	emit dataChanged();
+	emit entryAdded(taskId, newLog);
 }
 
 vector<int> DataModel::getIds(){

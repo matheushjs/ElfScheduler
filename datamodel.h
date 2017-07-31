@@ -62,7 +62,12 @@ public:
 	std::string getName();
 
 signals:
-	void dataChanged();
+	void taskRemoved(int taskId);
+	void taskAdded(int taskId);
+
+	// taskEdited signal might be triggered for an UPDATE to a non-existing task.
+	void taskEdited(int taskId);
+	void entryAdded(int taskId, const std::string &newEntry);
 
 public slots:
 };

@@ -20,7 +20,9 @@ TaskViewerPane::TaskViewerPane(DataModel &model, QWidget *parent)
 
 	// Whenever the data is changed, fill the list widget again.
 	makeView();
-	connect(&model, SIGNAL(dataChanged()), this, SLOT(makeView()));
+	connect(&model, SIGNAL(taskEdited(int)), this, SLOT(makeView()));
+	connect(&model, SIGNAL(taskRemoved(int)), this, SLOT(makeView()));
+	connect(&model, SIGNAL(taskAdded(int)), this, SLOT(makeView()));
 
 	// Re-emit the button signal
 	connect(d_button, SIGNAL(clicked(bool)), this, SIGNAL(addClicked()));

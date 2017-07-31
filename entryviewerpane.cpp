@@ -16,10 +16,9 @@ EntryViewerPane::EntryViewerPane(int taskId, DataModel &model, QWidget *parent)
 	  d_taskId(taskId)
 {
 	setupUI();
-	setFocusProxy(d_line);
-	setFocusPolicy(Qt::StrongFocus);
-	d_list->setFocusPolicy(Qt::NoFocus);
-	connect(d_line, &QLineEdit::returnPressed, this, &EntryViewerPane::addInputTask);
+
+	connect(d_line, SIGNAL(returnPressed()), this, SLOT(addInputTask()));
+	connect(&d_model, SIGNAL(taskEdited(int)), this, SLOT(checkTaskChanged(int)));
 }
 
 void EntryViewerPane::setupUI(){
@@ -34,6 +33,10 @@ void EntryViewerPane::setupUI(){
 		d_list->addItem(QString(str.c_str()));
 	}
 
+	setFocusProxy(d_line);
+	setFocusPolicy(Qt::StrongFocus);
+	d_list->setFocusPolicy(Qt::NoFocus);
+
 	setLayout(box);
 }
 
@@ -42,6 +45,17 @@ void EntryViewerPane::addInputTask(){
 	d_line->setText("");
 	if(str == "") return;
 
-	// As soon as the model is changed, EntryPane will replace all EntryViewerPanes for new ones.
+	d_list->insertItem(0, str.c_str());
 	d_model.addEntry(d_taskId, str);
+}
+
+void EntryViewerPane::checkTaskChanged(int taskId){
+	if(d_taskId != taskId)
+		return;
+
+	d_header->setText(d_model.getTitle(taskId).c_str());
+}
+
+int EntryViewerPane::getId(){
+	return d_taskId;
 }

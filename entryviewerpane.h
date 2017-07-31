@@ -22,12 +22,16 @@ class EntryViewerPane : public QWidget
 	int d_taskId;
 
 	void setupUI();
-	void addInputTask();
 
 public:
 	explicit EntryViewerPane(int taskId, DataModel &model, QWidget *parent = 0);
+	int getId();
 
 signals:
+
+private slots:
+	void addInputTask();
+	void checkTaskChanged(int taskId);
 
 public slots:
 };

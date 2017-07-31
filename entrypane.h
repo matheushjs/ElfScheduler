@@ -18,15 +18,21 @@ class EntryPane : public QWidget
 	DataModel &d_model;
 	std::vector<EntryViewerPane*> d_panes;
 	QLabel *d_header;
+	int d_week;
 
-	void setupUI();
-	void addTask(int taskId);
-	void makeView();
+	// Receives argument just as reminder that d_week should be initialized.
+	void setupUI(int currentWeek);
+	void initializeView();
 
 public:
 	explicit EntryPane(DataModel &model, QWidget *parent = 0);
 
 signals:
+
+private slots:
+	void addTask(int taskId);
+	void removeTask(int taskId);
+	void checkEditedTask(int taskId);
 
 public slots:
 };
