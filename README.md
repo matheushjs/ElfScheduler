@@ -54,3 +54,9 @@ On the **left pane** of the interface, there should be a list of tasks on your s
 # Building
 
 The program was developed using Qt version 5, so any QtCreator with support for version 5 will be able to build this project.
+
+# Internals
+
+Each schedule is a SQLite3 database, and its .db file will be located at the directory .elfscheduler in your HOME folder.
+
+Erasing any .db file implicates on erasing that specific schedule.
