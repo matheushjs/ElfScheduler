@@ -1,4 +1,7 @@
 # ElfScheduler
+
+<img src="https://mjsaldanha.com/images/elf_icon.png" width="128" height="128">
+
 Simple scheduler for keeping track of a group of tasks that should be executed in different days of a week.
 
 The application was mainly developed for use in learning a new spoken language. Take chinese, for example; for learning it effectively you'd need to be well organized with executing a bunch of tasks such as practicing how to write their weird characters, or even verifying your memory on how well you can recall all of a given set of hanzi/kanji.
